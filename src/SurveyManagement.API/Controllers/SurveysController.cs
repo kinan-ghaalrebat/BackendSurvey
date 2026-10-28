@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SurveyManagement.Application.Surveys.Commands.CreateSurvey;
+using SurveyManagement.Application.Surveys.Commands.SubmitSurveyResponse;
+using SurveyManagement.Application.Surveys.Queries.GetSurveyResponses;
 using SurveyManagement.Application.Surveys.Queries.GetSurveyById;
 using SurveyManagement.Application.Surveys.Queries.GetSurveys;
 
@@ -41,5 +43,24 @@ public class SurveysController : ControllerBase
     {
         var survey = await _mediator.Send(new GetSurveyByIdQuery(id), cancellationToken);
         return Ok(survey);
+    }
+
+    [HttpPost("{id:int}/submit")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Submit(int id, SubmitSurveyResponseRequest request, CancellationToken cancellationToken)
+    {
+        var responseId = await _mediator.Send(new SubmitSurveyResponseCommand(id, request.Answers), cancellationToken);
+        return CreatedAtAction(nameof(GetResponses), new { id }, new { id = responseId });
+    }
+
+    [HttpGet("{id:int}/responses")]
+    [ProducesResponseType(typeof(List<SurveyResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetResponses(int id, CancellationToken cancellationToken)
+    {
+        var responses = await _mediator.Send(new GetSurveyResponsesQuery(id), cancellationToken);
+        return Ok(responses);
     }
 }
