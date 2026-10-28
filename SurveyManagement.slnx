@@ -5,4 +5,7 @@
     <Project Path="src/SurveyManagement.Domain/SurveyManagement.Domain.csproj" />
     <Project Path="src/SurveyManagement.Infrastructure/SurveyManagement.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SurveyManagement.UnitTests/SurveyManagement.UnitTests.csproj" />
+  </Folder>
 </Solution>
